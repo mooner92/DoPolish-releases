@@ -1,0 +1,87 @@
+name: build
+
+# 비공개 코드 저장소(mooner92/DoPolish)의 태그를 받아 Windows 설치본을 만들고, 이 저장소 릴리스에 올린다.
+# - 공개 저장소라 Actions 시간이 무료다(비공개 저장소는 11/14부터 예산 한도로 빌드가 막혔다).
+# - 코드는 SOURCE_TOKEN(DoPolish 'Contents: Read-only' 세밀 토큰)으로 받아 빌드만 한다. 코드는 올리지 않는다.
+# - 붙임표가 든 태그(v2.0.0-beta.1)는 미리 보기 판(Pre-release), 아니면 최신 판(Latest). 앱은 최신 판만 받는다.
+# 돌리기: Actions → build → Run workflow → 태그 입력   (또는  gh workflow run build.yml -R mooner92/DoPolish-releases -f tag=v1.1.2)
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "DoPolish 태그(예: v1.1.2)"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 50
+    defaults:
+      run:
+        shell: bash
+    env:
+      TAG: ${{ inputs.tag }}
+    steps:
+      - name: 이미 올린 태그인지
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then echo "::error::${TAG} 릴리스가 이미 있습니다"; exit 1; fi
+      - name: 코드 받기(비공개 저장소, 읽기 전용 토큰)
+        uses: actions/checkout@v4
+        with:
+          repository: mooner92/DoPolish
+          ref: ${{ inputs.tag }}
+          token: ${{ secrets.SOURCE_TOKEN }}
+          path: src
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            src/package-lock.json
+            src/desktop/package-lock.json
+      - name: 태그와 버전 맞추기
+        working-directory: src
+        run: |
+          core=$(node -p "require('./package.json').version")
+          app=$(node -p "require('./desktop/package.json').version")
+          echo "태그 ${TAG} · 코어 ${core} · 앱 ${app}"
+          test "${TAG#v}" = "$core" && test "$core" = "$app"
+      - name: 코어 의존성
+        working-directory: src
+        run: npm ci
+      - name: 앱 의존성
+        working-directory: src/desktop
+        run: npm ci
+      - name: 타입 검사·단위 시험
+        working-directory: src/desktop
+        run: npm run typecheck && npm test
+      - name: 예시 스타일
+        working-directory: src/desktop
+        run: npm run samples
+      - name: 끝까지 시험(실제 창)
+        working-directory: src/desktop
+        run: npm run e2e
+      - name: 설치본·무설치 실행본
+        working-directory: src/desktop
+        run: npx electron-builder --win --publish never
+      - name: 릴리스(이 저장소)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="$PWD/src/.github/release-notes/${TAG}.md"
+          if [ -f "$notes" ]; then set -- --notes-file "$notes"; else set -- --notes "Do Polish ${TAG}"; fi
+          case "$TAG" in *-*) kind=--prerelease ;; *) kind=--latest ;; esac
+          cd src/desktop/release
+          ls -l DoPolish-Setup.exe DoPolish-Setup.exe.blockmap latest.yml DoPolish-Portable.exe
+          gh release create "$TAG" -R "$GITHUB_REPOSITORY" --target main "$kind" --title "Do Polish ${TAG}" "$@" \
+            DoPolish-Setup.exe DoPolish-Setup.exe.blockmap latest.yml DoPolish-Portable.exe
