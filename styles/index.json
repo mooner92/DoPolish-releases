@@ -2,7 +2,7 @@
   "format": "dop-style-index/1",
   "name": "Do Polish 공식 기관 스타일",
   "source": "NKIS(국가정책연구포털) 공개 발간본에서 qwen 관찰 → 코드 게이트 → Claude haiku·sonnet·opus 검증 → 시험 문서 오탐 검사로 만든 규칙",
-  "updated": "2026-11-16T04:39:55.232Z",
+  "updated": "2026-11-16T05:09:48.147Z",
   "packs": [
     {
       "id": "건축공간연구원/auri brief",
@@ -291,30 +291,56 @@
       "updated": "2026-11-16T04:39:55.232Z"
     },
     {
+      "id": "한국법제연구원/Issue Paper",
+      "org": "한국법제연구원",
+      "docType": "Issue Paper",
+      "version": 1,
+      "hash": "5a3176c4b327bd2040725796ee8450aa0f010fd3cd7faf1b812b1117d756fbdb",
+      "checkers": 1,
+      "accepted": 8,
+      "nDocs": 105,
+      "file": "bundles/ebac075b48488882.json",
+      "bytes": 5780,
+      "updated": "2026-11-16T05:09:48.147Z"
+    },
+    {
       "id": "한국법제연구원/연구보고서",
       "org": "한국법제연구원",
       "docType": "연구보고서",
-      "version": 1,
-      "hash": "eb750c4df0323d661740f1c6fea7056dd0dba2e9dbe1b58b3394554f53710160",
+      "version": 2,
+      "hash": "f1eaac6ed974b5fca2e91e4d6c40e1a8054a271c2b1212ac38a53669cd6893c5",
       "checkers": 7,
       "accepted": 9,
       "nDocs": 91,
       "file": "bundles/81f248aa0e32ad67.json",
-      "bytes": 11880,
-      "updated": "2026-11-16T04:39:55.232Z"
+      "bytes": 11896,
+      "updated": "2026-11-16T05:09:48.147Z"
+    },
+    {
+      "id": "한국보건사회연구원/보건사회연구",
+      "org": "한국보건사회연구원",
+      "docType": "보건사회연구",
+      "version": 1,
+      "hash": "f0eb1ba6cf075c101b62866082dbfca617d5f4a1c6163625f29d59938f4b5030",
+      "checkers": 4,
+      "accepted": 17,
+      "nDocs": 111,
+      "file": "bundles/0df1233cc6c896ea.json",
+      "bytes": 11517,
+      "updated": "2026-11-16T05:09:48.147Z"
     },
     {
       "id": "한국보건사회연구원/연구보고서",
       "org": "한국보건사회연구원",
       "docType": "연구보고서",
-      "version": 1,
-      "hash": "44ecd0918d40ad062b1d7f0df34d159c2519948cf765f6a49177fdc97112e716",
+      "version": 2,
+      "hash": "3f94798d4ab41e98344075dda99905f2b2cb96c8a2155ae40498c15a85e99eae",
       "checkers": 6,
       "accepted": 15,
       "nDocs": 73,
       "file": "bundles/e172ab444607f793.json",
-      "bytes": 14106,
-      "updated": "2026-11-16T04:39:55.232Z"
+      "bytes": 14134,
+      "updated": "2026-11-16T05:09:48.147Z"
     },
     {
       "id": "한국조세재정연구원/연구보고서",
